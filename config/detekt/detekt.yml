@@ -1,0 +1,12 @@
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated: ['Composable']
+
+style:
+  MagicNumber:
+    active: true
+    ignorePropertyDeclaration: true
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated: ['Composable', 'Preview']
