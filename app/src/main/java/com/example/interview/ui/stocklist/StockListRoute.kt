@@ -14,11 +14,16 @@ fun StockListRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val sortOption by viewModel.sortOption.collectAsStateWithLifecycle()
     val isSortSheetVisible by viewModel.isSortSheetVisible.collectAsStateWithLifecycle()
+    val selectedStock by viewModel.selectedStock.collectAsStateWithLifecycle()
 
     StockListScreen(
-        uiState = uiState,
-        sortOption = sortOption,
-        isSortSheetVisible = isSortSheetVisible,
+        screenState =
+            StockListScreenState(
+                uiState = uiState,
+                sortOption = sortOption,
+                isSortSheetVisible = isSortSheetVisible,
+                selectedStock = selectedStock,
+            ),
         onIntent = viewModel::onIntent,
         modifier = modifier,
     )

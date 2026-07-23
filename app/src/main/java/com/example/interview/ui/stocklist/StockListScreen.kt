@@ -17,10 +17,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.interview.R
-import com.example.interview.ui.model.SortOption
 import com.example.interview.ui.model.StockUiModel
 import com.example.interview.ui.stocklist.component.SortBottomSheet
 import com.example.interview.ui.stocklist.component.StockCard
+import com.example.interview.ui.stocklist.component.StockDetailDialog
 import com.example.interview.ui.stocklist.component.StockListEmptyView
 import com.example.interview.ui.stocklist.component.StockListErrorView
 import com.example.interview.ui.stocklist.component.StockListLoadingSkeleton
@@ -28,9 +28,7 @@ import com.example.interview.ui.stocklist.component.StockListLoadingSkeleton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StockListScreen(
-    uiState: StockListUiState,
-    sortOption: SortOption,
-    isSortSheetVisible: Boolean,
+    screenState: StockListScreenState,
     onIntent: (StockListViewIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -51,7 +49,7 @@ fun StockListScreen(
         },
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-            when (uiState) {
+            when (val uiState = screenState.uiState) {
                 StockListUiState.Loading -> StockListLoadingSkeleton(modifier = Modifier.fillMaxSize())
                 StockListUiState.Empty -> StockListEmptyView(modifier = Modifier.fillMaxSize())
                 is StockListUiState.Error ->
@@ -69,11 +67,18 @@ fun StockListScreen(
         }
     }
 
-    if (isSortSheetVisible) {
+    if (screenState.isSortSheetVisible) {
         SortBottomSheet(
-            selectedOption = sortOption,
+            selectedOption = screenState.sortOption,
             onOptionSelected = { onIntent(StockListViewIntent.OnSortOptionSelected(it)) },
             onDismiss = { onIntent(StockListViewIntent.OnSortSheetDismissed) },
+        )
+    }
+
+    screenState.selectedStock?.let { stock ->
+        StockDetailDialog(
+            stock = stock,
+            onDismiss = { onIntent(StockListViewIntent.OnStockDetailDismissed) },
         )
     }
 }
