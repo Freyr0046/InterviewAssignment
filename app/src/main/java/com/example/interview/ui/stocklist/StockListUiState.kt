@@ -17,3 +17,11 @@ sealed interface StockListUiState {
 
     data object Empty : StockListUiState
 }
+
+val StockListUiState.isRefreshing: Boolean
+    get() =
+        when (this) {
+            is StockListUiState.Success -> isRefreshing
+            is StockListUiState.Error -> isRefreshing
+            StockListUiState.Loading, StockListUiState.Empty -> false
+        }

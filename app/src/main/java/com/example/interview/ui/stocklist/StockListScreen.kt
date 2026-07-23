@@ -1,6 +1,5 @@
 package com.example.interview.ui.stocklist
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -48,7 +48,11 @@ fun StockListScreen(
             )
         },
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+        PullToRefreshBox(
+            isRefreshing = screenState.uiState.isRefreshing,
+            onRefresh = { onIntent(StockListViewIntent.OnRefresh) },
+            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+        ) {
             when (val uiState = screenState.uiState) {
                 StockListUiState.Loading -> StockListLoadingSkeleton(modifier = Modifier.fillMaxSize())
                 StockListUiState.Empty -> StockListEmptyView(modifier = Modifier.fillMaxSize())
