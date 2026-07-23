@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.interview.R
+import com.example.interview.ui.model.SortOption
 import com.example.interview.ui.model.StockUiModel
+import com.example.interview.ui.stocklist.component.SortBottomSheet
 import com.example.interview.ui.stocklist.component.StockCard
 import com.example.interview.ui.stocklist.component.StockListEmptyView
 import com.example.interview.ui.stocklist.component.StockListErrorView
@@ -27,6 +29,8 @@ import com.example.interview.ui.stocklist.component.StockListLoadingSkeleton
 @Composable
 fun StockListScreen(
     uiState: StockListUiState,
+    sortOption: SortOption,
+    isSortSheetVisible: Boolean,
     onIntent: (StockListViewIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,6 +67,14 @@ fun StockListScreen(
                     )
             }
         }
+    }
+
+    if (isSortSheetVisible) {
+        SortBottomSheet(
+            selectedOption = sortOption,
+            onOptionSelected = { onIntent(StockListViewIntent.OnSortOptionSelected(it)) },
+            onDismiss = { onIntent(StockListViewIntent.OnSortSheetDismissed) },
+        )
     }
 }
 

@@ -12,9 +12,13 @@ fun StockListRoute(
     viewModel: StockListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val sortOption by viewModel.sortOption.collectAsStateWithLifecycle()
+    val isSortSheetVisible by viewModel.isSortSheetVisible.collectAsStateWithLifecycle()
 
     StockListScreen(
         uiState = uiState,
+        sortOption = sortOption,
+        isSortSheetVisible = isSortSheetVisible,
         onIntent = viewModel::onIntent,
         modifier = modifier,
     )
