@@ -6,6 +6,7 @@ import com.example.interview.data.remote.dto.StockDayAvgDto
 import com.example.interview.data.remote.dto.StockDayDto
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -85,6 +86,21 @@ class StockRepositoryImplTest {
 
             assertTrue(result.isSuccess)
             assertEquals(2, attempt)
+        }
+
+    @Test
+    fun `getDailyTrading rethrows CancellationException instead of wrapping it`() =
+        runTest {
+            coEvery { apiService.getStockDayAll() } throws CancellationException("scope cancelled")
+
+            var thrown: Throwable? = null
+            try {
+                repository.getDailyTrading()
+            } catch (e: CancellationException) {
+                thrown = e
+            }
+
+            assertTrue(thrown is CancellationException)
         }
 
     @Test

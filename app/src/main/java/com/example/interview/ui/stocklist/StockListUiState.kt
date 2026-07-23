@@ -1,10 +1,13 @@
 package com.example.interview.ui.stocklist
 
+import androidx.compose.runtime.Immutable
 import com.example.interview.ui.model.StockUiModel
 
+@Immutable
 sealed interface StockListUiState {
     data object Loading : StockListUiState
 
+    @Immutable
     data class Success(
         val stocks: List<StockUiModel>,
         val isRefreshing: Boolean = false,

@@ -14,30 +14,32 @@ private const val PLACEHOLDER = "-"
 class StockUiModelMapper
     @Inject
     constructor() {
-        private val priceFormat = DecimalFormat("#,##0.00", DecimalFormatSymbols(Locale.US))
-        private val countFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.US))
-
-        fun toUiModel(stock: Stock): StockUiModel =
-            with(stock) {
+        // Created fresh per toUiModel() call rather than shared instance fields —
+        // java.text.DecimalFormat is not thread-safe.
+        fun toUiModel(stock: Stock): StockUiModel {
+            val priceFormat = DecimalFormat("#,##0.00", DecimalFormatSymbols(Locale.US))
+            val countFormat = DecimalFormat("#,###", DecimalFormatSymbols(Locale.US))
+            return with(stock) {
                 StockUiModel(
                     code = code,
                     name = name,
-                    openingPrice = openingPrice.formatPrice(),
-                    closingPrice = closingPrice.formatPrice(),
+                    openingPrice = openingPrice.formatPrice(priceFormat),
+                    closingPrice = closingPrice.formatPrice(priceFormat),
                     closingPriceColor = closingPriceColor(closingPrice, monthlyAveragePrice),
-                    highestPrice = highestPrice.formatPrice(),
-                    lowestPrice = lowestPrice.formatPrice(),
-                    change = change.formatSignedPrice(),
+                    highestPrice = highestPrice.formatPrice(priceFormat),
+                    lowestPrice = lowestPrice.formatPrice(priceFormat),
+                    change = change.formatSignedPrice(priceFormat),
                     changeColor = changeColor(change),
-                    monthlyAveragePrice = monthlyAveragePrice.formatPrice(),
-                    transaction = transaction.formatCount(),
-                    tradeVolume = tradeVolume.formatCount(),
-                    tradeValue = tradeValue.formatCount(),
-                    peRatio = peRatio.formatPrice(),
-                    dividendYield = dividendYield.formatPrice(),
-                    pbRatio = pbRatio.formatPrice(),
+                    monthlyAveragePrice = monthlyAveragePrice.formatPrice(priceFormat),
+                    transaction = transaction.formatCount(countFormat),
+                    tradeVolume = tradeVolume.formatCount(countFormat),
+                    tradeValue = tradeValue.formatCount(countFormat),
+                    peRatio = peRatio.formatPrice(priceFormat),
+                    dividendYield = dividendYield.formatPrice(priceFormat),
+                    pbRatio = pbRatio.formatPrice(priceFormat),
                 )
             }
+        }
 
         private fun closingPriceColor(
             closingPrice: Double?,
@@ -58,11 +60,11 @@ class StockUiModelMapper
                 else -> PriceIndicatorColor.DOWN_GREEN
             }
 
-        private fun Double?.formatPrice(): String = this?.let { priceFormat.format(it) } ?: PLACEHOLDER
+        private fun Double?.formatPrice(format: DecimalFormat): String = this?.let { format.format(it) } ?: PLACEHOLDER
 
-        private fun Double?.formatSignedPrice(): String {
+        private fun Double?.formatSignedPrice(format: DecimalFormat): String {
             if (this == null) return PLACEHOLDER
-            val magnitude = priceFormat.format(abs(this))
+            val magnitude = format.format(abs(this))
             return when {
                 this > 0 -> "+$magnitude"
                 this < 0 -> "-$magnitude"
@@ -70,5 +72,5 @@ class StockUiModelMapper
             }
         }
 
-        private fun Long?.formatCount(): String = this?.let { countFormat.format(it) } ?: PLACEHOLDER
+        private fun Long?.formatCount(format: DecimalFormat): String = this?.let { format.format(it) } ?: PLACEHOLDER
     }

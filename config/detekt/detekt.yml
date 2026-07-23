@@ -10,3 +10,19 @@ style:
   UnusedPrivateMember:
     active: true
     ignoreAnnotated: ['Composable', 'Preview']
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: true
+    # Default list minus Throwable: runCatchingCancellable (data/util/SafeResult.kt) is the
+    # one deliberate Result<T>-boundary catch-all, and must catch Throwable broadly while
+    # still rethrowing CancellationException. Bare `catch (e: Exception)` etc. elsewhere is
+    # still flagged.
+    exceptionNames:
+      - ArrayIndexOutOfBoundsException
+      - Error
+      - Exception
+      - IndexOutOfBoundsException
+      - NullPointerException
+      - IllegalMonitorStateException
+      - RuntimeException
