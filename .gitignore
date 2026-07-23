@@ -32,3 +32,7 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Local-only spec/PRD docs (not to be committed)
+/doc/
+/docs/
