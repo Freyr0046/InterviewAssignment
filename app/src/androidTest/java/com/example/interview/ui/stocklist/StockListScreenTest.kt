@@ -1,8 +1,14 @@
 package com.example.interview.ui.stocklist
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
 import com.example.interview.ui.model.PriceIndicatorColor
 import com.example.interview.ui.model.SortOption
 import com.example.interview.ui.model.StockUiModel
@@ -119,6 +125,32 @@ class StockListScreenTest {
         assert(receivedIntents.contains(StockListViewIntent.OnSortOptionSelected(SortOption.CODE_ASC))) {
             "Expected OnSortOptionSelected(CODE_ASC), got $receivedIntents"
         }
+    }
+
+    @Test
+    fun changingSortOption_scrollsListBackToTop() {
+        val stocks = (1..30).map { stockUiModel(code = "%04d".format(it), name = "Stock$it") }
+        var sortOption by mutableStateOf(SortOption.CODE_DESC)
+
+        composeRule.setContent {
+            StockListScreen(
+                screenState =
+                    StockListScreenState(
+                        uiState = StockListUiState.Success(stocks),
+                        sortOption = sortOption,
+                        isSortSheetVisible = false,
+                        selectedStock = null,
+                    ),
+                onIntent = {},
+            )
+        }
+
+        composeRule.onNode(hasScrollAction()).performScrollToIndex(stocks.lastIndex)
+        composeRule.onNodeWithText(stocks.first().name).assertDoesNotExist()
+
+        composeRule.runOnIdle { sortOption = SortOption.CODE_ASC }
+
+        composeRule.onNodeWithText(stocks.first().name).assertIsDisplayed()
     }
 
     @Test
