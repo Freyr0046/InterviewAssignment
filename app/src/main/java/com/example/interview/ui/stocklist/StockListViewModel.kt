@@ -85,7 +85,11 @@ class StockListViewModel
         ): StockListUiState {
             if (stocks.isEmpty()) return StockListUiState.Empty
             val sorted = sortStocks(stocks.map(uiModelMapper::toUiModel), _sortOption.value)
-            return StockListUiState.Success(stocks = sorted, isRefreshing = isRefreshing)
+            return StockListUiState.Success(
+                stocks = sorted,
+                isRefreshing = isRefreshing,
+                tradingDate = stocks.first().date?.replace('-', '/'),
+            )
         }
 
         private fun onSortOptionSelected(option: SortOption) {

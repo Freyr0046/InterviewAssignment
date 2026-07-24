@@ -51,6 +51,7 @@ private fun DailyTrading.toStock(
     Stock(
         code = code,
         name = name,
+        date = date,
         openingPrice = openingPrice,
         closingPrice = closingPrice,
         highestPrice = highestPrice,

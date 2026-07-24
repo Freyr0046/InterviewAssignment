@@ -14,6 +14,7 @@ class StockDtoMapperTest {
             StockDayDto(
                 code = "1101",
                 name = "台泥",
+                date = "1150723",
                 tradeVolume = "39821926",
                 tradeValue = "554902048",
                 openingPrice = "13.87",
@@ -28,6 +29,7 @@ class StockDtoMapperTest {
 
         assertEquals("1101", domain.code)
         assertEquals("台泥", domain.name)
+        assertEquals("2026-07-23", domain.date)
         assertEquals(39821926L, domain.tradeVolume)
         assertEquals(554902048L, domain.tradeValue)
         assertEquals(13.87, domain.openingPrice)
@@ -36,6 +38,26 @@ class StockDtoMapperTest {
         assertEquals(13.88, domain.closingPrice)
         assertEquals(-0.45, domain.change)
         assertEquals(9467L, domain.transaction)
+    }
+
+    @Test
+    fun `StockDayDto with malformed date maps to null`() {
+        val dto =
+            StockDayDto(
+                code = "1101",
+                name = "台泥",
+                date = "",
+                tradeVolume = "39821926",
+                tradeValue = "554902048",
+                openingPrice = "13.87",
+                highestPrice = "14.01",
+                lowestPrice = "13.76",
+                closingPrice = "13.88",
+                change = "-0.4500",
+                transaction = "9467",
+            )
+
+        assertNull(dto.toDomain().date)
     }
 
     @Test

@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StockDayDto(
+    @SerialName("Date") val date: String = "",
     @SerialName("Code") val code: String,
     @SerialName("Name") val name: String,
     @SerialName("TradeVolume") val tradeVolume: String,

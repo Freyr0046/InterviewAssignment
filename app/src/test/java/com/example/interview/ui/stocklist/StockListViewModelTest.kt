@@ -33,9 +33,11 @@ class StockListViewModelTest {
     private fun stock(
         code: String,
         change: Double = 0.0,
+        date: String? = "2026-07-23",
     ) = Stock(
         code = code,
         name = "Stock $code",
+        date = date,
         openingPrice = 10.0,
         closingPrice = 10.0,
         highestPrice = 10.0,
@@ -81,6 +83,7 @@ class StockListViewModelTest {
             val state = viewModel.uiState.value
             assertTrue(state is StockListUiState.Success)
             assertEquals("1101", (state as StockListUiState.Success).stocks.single().code)
+            assertEquals("2026/07/23", state.tradingDate)
         }
 
     @Test

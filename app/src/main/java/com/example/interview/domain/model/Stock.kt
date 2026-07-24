@@ -3,6 +3,7 @@ package com.example.interview.domain.model
 data class Stock(
     val code: String,
     val name: String,
+    val date: String? = null,
     val openingPrice: Double?,
     val closingPrice: Double?,
     val highestPrice: Double?,

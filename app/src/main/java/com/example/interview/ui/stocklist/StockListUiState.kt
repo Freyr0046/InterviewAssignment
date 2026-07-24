@@ -11,6 +11,7 @@ sealed interface StockListUiState {
     data class Success(
         val stocks: List<StockUiModel>,
         val isRefreshing: Boolean = false,
+        val tradingDate: String? = null,
     ) : StockListUiState
 
     data class Error(

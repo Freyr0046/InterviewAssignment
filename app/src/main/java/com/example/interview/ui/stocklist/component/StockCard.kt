@@ -1,15 +1,22 @@
 package com.example.interview.ui.stocklist.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.interview.domain.model.Stock
@@ -38,15 +45,15 @@ fun StockCard(
             Text(text = stock.code, style = MaterialTheme.typography.labelMedium)
             Text(text = stock.name, style = MaterialTheme.typography.titleMedium)
 
-            LabeledValueRow(
+            PriceRow(
                 ValueEntry("開盤價", stock.openingPrice),
                 ValueEntry("收盤價", stock.closingPrice, stock.closingPriceColor.asColor()),
             )
-            LabeledValueRow(
+            PriceRow(
                 ValueEntry("最高價", stock.highestPrice),
                 ValueEntry("最低價", stock.lowestPrice),
             )
-            LabeledValueRow(
+            PriceRow(
                 ValueEntry("漲跌價差", stock.change, stock.changeColor.asColor()),
                 ValueEntry("月平均價", stock.monthlyAveragePrice),
             )
@@ -59,15 +66,65 @@ fun StockCard(
     }
 }
 
+// Renders a 2-entry price row as 4 equal-width, right-aligned columns: label, value, label, value.
+@Composable
+private fun PriceRow(
+    left: ValueEntry,
+    right: ValueEntry,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        PriceCell(text = left.label, style = MaterialTheme.typography.labelSmall, modifier = Modifier.weight(1f))
+        PriceCell(
+            text = left.value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = left.color,
+            modifier = Modifier.weight(1f),
+        )
+        PriceCell(text = right.label, style = MaterialTheme.typography.labelSmall, modifier = Modifier.weight(1f))
+        PriceCell(
+            text = right.value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = right.color,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun PriceCell(
+    text: String,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+) {
+    Text(
+        text = text,
+        style = style,
+        color = color,
+        textAlign = TextAlign.End,
+        maxLines = 1,
+        autoSize = TextAutoSize.StepBased(maxFontSize = style.fontSize),
+        modifier = modifier,
+    )
+}
+
 @Composable
 private fun LabeledValueRow(vararg entries: ValueEntry) {
-    Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
-        entries.forEach { entry ->
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        entries.forEachIndexed { index, entry ->
             LabeledValue(
                 label = entry.label,
                 value = entry.value,
                 valueColor = entry.color,
-                modifier = Modifier.weight(1f),
+                // Only the last entry absorbs leftover row width — earlier entries stay as
+                // small as their content so short values don't get stretched apart.
+                modifier = if (index == entries.lastIndex) Modifier.weight(1f) else Modifier,
             )
         }
     }
@@ -80,9 +137,17 @@ private fun LabeledValue(
     modifier: Modifier = Modifier,
     valueColor: Color = Color.Unspecified,
 ) {
-    Column(modifier = modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         Text(text = label, style = MaterialTheme.typography.labelSmall)
-        Text(text = value, style = MaterialTheme.typography.bodyMedium, color = valueColor)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyMedium,
+            color = valueColor,
+            maxLines = 1,
+            autoSize = TextAutoSize.StepBased(maxFontSize = MaterialTheme.typography.bodyMedium.fontSize),
+            modifier = Modifier.weight(1f, fill = false),
+        )
     }
 }
 
