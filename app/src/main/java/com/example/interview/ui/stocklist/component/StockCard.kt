@@ -115,16 +115,17 @@ private fun PriceCell(
 private fun LabeledValueRow(vararg entries: ValueEntry) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        entries.forEachIndexed { index, entry ->
+        entries.forEach { entry ->
             LabeledValue(
                 label = entry.label,
                 value = entry.value,
                 valueColor = entry.color,
-                // Only the last entry absorbs leftover row width — earlier entries stay as
-                // small as their content so short values don't get stretched apart.
-                modifier = if (index == entries.lastIndex) Modifier.weight(1f) else Modifier,
+                // Bounded to an equal share of the row (but not forced to fill it) so leftover
+                // space is spread evenly between entries via SpaceBetween, instead of piling up
+                // after the last one.
+                modifier = Modifier.weight(1f, fill = false),
             )
         }
     }
